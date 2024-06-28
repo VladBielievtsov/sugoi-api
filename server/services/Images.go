@@ -101,3 +101,25 @@ func (s *ImagesService) GetImages() ([]types.Image, map[string]string) {
 
 	return images, nil
 }
+
+func (s *ImagesService) GetImageByID(id string) (types.Image, map[string]string) {
+	var image types.Image
+
+	result := db.DB.First(&image, "id = ?", id)
+	if result.Error != nil {
+		return types.Image{}, map[string]string{"msg": "Image not found"}
+	}
+
+	return image, nil
+}
+
+func (s *ImagesService) GetRandomImages(limit int) ([]types.Image, map[string]string) {
+	var images []types.Image
+
+	result := db.DB.Order("RANDOM()").Limit(limit).Find(&images)
+	if result.Error != nil {
+		return nil, map[string]string{"msg": "Images not found"}
+	}
+
+	return images, nil
+}

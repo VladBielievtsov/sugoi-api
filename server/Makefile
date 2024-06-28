@@ -8,4 +8,4 @@ seed:
 	@go run cmd/seed/main.go
 
 drop:
-	@go run cmd/drop/main.go⏎ 
+	@go run cmd/drop/main.go
