@@ -38,7 +38,7 @@ func CreateDatabase() error {
 }
 
 func Migrate() {
-	err := DB.AutoMigrate(&types.Image{})
+	err := DB.AutoMigrate(&types.Image{}, &types.Tag{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}

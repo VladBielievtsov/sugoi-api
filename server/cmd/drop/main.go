@@ -20,6 +20,7 @@ func main() {
 	}
 
 	clearTable(db.DB, &types.Image{})
+	clearTable(db.DB, &types.Tag{})
 
 	fmt.Println("Database cleared successfully.")
 }

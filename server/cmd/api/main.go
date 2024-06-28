@@ -31,10 +31,15 @@ func main() {
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Post("/images", handlers.StoreImage) // Form-Data: source: string, image: file
+		r.Post("/images", handlers.StoreImage) // Form-Data{ source: string, image: file }
 		r.Get("/images", handlers.GetImages)
 		r.Get("/images/{id}", handlers.GetImageByID)
-		r.Get("/images/random", handlers.GetRandomImages) // Body: limit: int
+		r.Get("/images/random", handlers.GetRandomImages) // Body{ limit: int }
+	})
+
+	r.Group(func(r chi.Router) {
+		r.Post("/tags", handlers.CreateTag) // Body{ name: string, description: string }
+		r.Get("/tags/{name}", handlers.GetTagByName)
 	})
 
 	err := http.ListenAndServe(":4000", r)
