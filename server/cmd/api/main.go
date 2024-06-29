@@ -26,6 +26,9 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	fs := http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads")))
+	r.Handle("/uploads/*", fs)
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		utils.JSONResponse(w, http.StatusOK, "Sugoi-API")
 	})
