@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 )
 
@@ -25,6 +26,13 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowCredentials: false,
+	}))
 
 	fs := http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads")))
 	r.Handle("/uploads/*", fs)
