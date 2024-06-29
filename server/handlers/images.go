@@ -22,7 +22,7 @@ func StoreImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetImages(w http.ResponseWriter, r *http.Request) {
-	images, err := imagesService.GetImages()
+	images, err := imagesService.GetImages(r)
 	if err != nil {
 		utils.JSONResponse(w, http.StatusNotFound, err)
 	}

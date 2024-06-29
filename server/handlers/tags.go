@@ -32,3 +32,12 @@ func GetTagByName(w http.ResponseWriter, r *http.Request) {
 
 	utils.JSONResponse(w, http.StatusOK, tag)
 }
+
+func GetTags(w http.ResponseWriter, r *http.Request) {
+	tags, err := tagsService.GetTags()
+	if err != nil {
+		utils.JSONResponse(w, http.StatusNotFound, err)
+	}
+
+	utils.JSONResponse(w, http.StatusOK, tags)
+}

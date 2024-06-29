@@ -91,10 +91,10 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 	return image, nil
 }
 
-func (s *ImagesService) GetImages() ([]types.Image, map[string]string) {
+func (s *ImagesService) GetImages(r *http.Request) ([]types.Image, map[string]string) {
 	var images []types.Image
 
-	result := db.DB.Find(&images)
+	result := db.DB.Scopes(db.Paginate(r)).Find(&images)
 	if result.Error != nil {
 		return nil, map[string]string{"msg": "Images not found"}
 	}

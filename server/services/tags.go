@@ -46,3 +46,14 @@ func (s *TagsService) GetTagByName(name string) (types.Tag, map[string]string) {
 
 	return tag, nil
 }
+
+func (s *TagsService) GetTags() ([]types.Tag, map[string]string) {
+	var tags []types.Tag
+
+	result := db.DB.Find(&tags)
+	if result.Error != nil {
+		return []types.Tag{}, map[string]string{"msg": "Tags not found"}
+	}
+
+	return tags, nil
+}

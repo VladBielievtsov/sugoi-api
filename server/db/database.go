@@ -3,7 +3,9 @@ package db
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
 	"sugoi-api/types"
 
 	"github.com/joho/godotenv"
@@ -43,4 +45,25 @@ func Migrate() {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 	log.Println("Database migrated successfully")
+}
+
+func Paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		q := r.URL.Query()
+		page, _ := strconv.Atoi(q.Get("page"))
+		if page <= 0 {
+			page = 1
+		}
+
+		pageSize, _ := strconv.Atoi(q.Get("page_size"))
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 5:
+			pageSize = 5
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }
