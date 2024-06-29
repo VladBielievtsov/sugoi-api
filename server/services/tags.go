@@ -57,3 +57,19 @@ func (s *TagsService) GetTags() ([]types.Tag, map[string]string) {
 
 	return tags, nil
 }
+
+func (s *TagsService) GetOrCreateTags(tagNames []string) ([]types.Tag, map[string]string) {
+	var tags []types.Tag
+	for _, tagName := range tagNames {
+		var tag types.Tag
+		if err := db.DB.Where("name = ?", tagName).First(&tag).Error; err != nil {
+			id := uuid.New()
+			if err := db.DB.Create(&types.Tag{ID: &id, Name: tagName, Description: "NULL"}).Error; err != nil {
+				return nil, map[string]string{"msg": "Failed to create tag"}
+			}
+			db.DB.Where("name = ?", tagName).First(&tag)
+		}
+		tags = append(tags, tag)
+	}
+	return tags, nil
+}

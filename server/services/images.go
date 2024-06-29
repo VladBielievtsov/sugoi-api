@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sugoi-api/db"
 	"sugoi-api/types"
 
@@ -23,6 +24,8 @@ func NewImagesService() *ImagesService {
 	return &ImagesService{}
 }
 
+var tagsService = NewTagsService()
+
 func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]string) {
 	err := req.ParseMultipartForm(10 << 20) // 10MB max file size
 	if err != nil {
@@ -30,6 +33,8 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 	}
 
 	source := req.FormValue("source")
+	tagsInput := req.FormValue("tags")
+
 	if source == "" {
 		return types.Image{}, map[string]string{"msg": "Image URL and Source are required"}
 	}
@@ -75,6 +80,16 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 	}
 	imageSize := int(imgInfo.Size())
 
+	var tags []types.Tag
+	if tagsInput != "" {
+		tagNames := strings.Split(tagsInput, ",")
+		var errTag map[string]string
+		tags, errTag = tagsService.GetOrCreateTags(tagNames)
+		if errTag != nil {
+			return types.Image{}, map[string]string{"msg": errTag["msg"]}
+		}
+	}
+
 	image := types.Image{
 		ID:          &id,
 		ImageURL:    "/" + filePath,
@@ -82,6 +97,7 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 		ImageSize:   imageSize,
 		ImageWidth:  imageWidth,
 		ImageHeight: imageHeight,
+		Tags:        tags,
 	}
 
 	if err = db.DB.Create(&image).Error; err != nil {
