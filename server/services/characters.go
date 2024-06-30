@@ -63,3 +63,15 @@ func (s *CharactersService) GetCharacters(name, gender, species string) ([]types
 
 	return characters, nil
 }
+
+func (s *CharactersService) GetCharactersByNames(names []string) ([]types.Character, map[string]string) {
+	var characters []types.Character
+	for _, name := range names {
+		var character types.Character
+		if err := db.DB.Where("name = ?", name).First(&character).Error; err != nil {
+			return nil, map[string]string{"msg": "Failed to find character"}
+		}
+		characters = append(characters, character)
+	}
+	return characters, nil
+}

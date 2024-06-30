@@ -26,6 +26,8 @@ func NewImagesService() *ImagesService {
 
 var tagsService = NewTagsService()
 
+var charactersService = NewCharactersService()
+
 func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]string) {
 	err := req.ParseMultipartForm(10 << 20) // 10MB max file size
 	if err != nil {
@@ -34,6 +36,7 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 
 	source := req.FormValue("source")
 	tagsInput := req.FormValue("tags")
+	charactersInput := req.FormValue("characters")
 
 	if source == "" {
 		return types.Image{}, map[string]string{"msg": "Image URL and Source are required"}
@@ -90,6 +93,16 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 		}
 	}
 
+	var characters []types.Character
+	if charactersInput != "" {
+		characterNames := strings.Split(charactersInput, ",")
+		var errCharacter map[string]string
+		characters, errCharacter = charactersService.GetCharactersByNames(characterNames)
+		if errCharacter != nil {
+			return types.Image{}, map[string]string{"msg": errCharacter["msg"]}
+		}
+	}
+
 	image := types.Image{
 		ID:          &id,
 		ImageURL:    "/" + filePath,
@@ -98,6 +111,7 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 		ImageWidth:  imageWidth,
 		ImageHeight: imageHeight,
 		Tags:        tags,
+		Characters:  characters,
 	}
 
 	if err = db.DB.Create(&image).Error; err != nil {
@@ -110,9 +124,9 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 func (s *ImagesService) GetImages(r *http.Request) ([]types.Image, map[string]string) {
 	var images []types.Image
 
-	result := db.DB.Preload("Tags")
+	result := db.DB.Preload("Tags").Preload("Characters")
 	result = result.Scopes(db.Paginate(r)).Find(&images)
-	
+
 	if result.Error != nil {
 		return nil, map[string]string{"msg": "Images not found"}
 	}
