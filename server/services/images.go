@@ -155,3 +155,25 @@ func (s *ImagesService) GetRandomImages(limit int) ([]types.Image, map[string]st
 
 	return images, nil
 }
+
+func (s *ImagesService) DeleteImage(id string) (types.Image, map[string]string) {
+	var image types.Image
+	result := db.DB.Preload("Tags").Preload("Characters").First(&image, "id = ?", id)
+	if result.Error != nil {
+		return types.Image{}, map[string]string{"msg": "Image not found"}
+	}
+
+	if err := db.DB.Model(&image).Association("Tags").Clear(); err != nil {
+		return types.Image{}, map[string]string{"msg": "Failed to delete associated image tags"}
+	}
+
+	if err := db.DB.Model(&image).Association("Characters").Clear(); err != nil {
+		return types.Image{}, map[string]string{"msg": "Failed to delete associated image characters"}
+	}
+
+	if err := db.DB.Delete(&image).Error; err != nil {
+		return types.Image{}, map[string]string{"msg": "Failed to delete the image"}
+	}
+
+	return image, nil
+}

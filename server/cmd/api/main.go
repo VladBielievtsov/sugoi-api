@@ -46,6 +46,7 @@ func main() {
 		r.Get("/images", handlers.GetImages)   // Query{ ?page=1, ?page_size=5 }
 		r.Get("/images/{id}", handlers.GetImageByID)
 		r.Get("/images/random", handlers.GetRandomImages) // Query{ ?limit=2 }
+		r.Delete("/images/{id}", handlers.DeleteImage)
 	})
 
 	r.Group(func(r chi.Router) {
@@ -55,8 +56,8 @@ func main() {
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Post("/characters", handlers.CreateCharacter)
-		r.Get("/characters", handlers.GetCharacters) // Query { name, gender, species }
+		r.Post("/characters", handlers.CreateCharacter) // Body{ name, description, gender, species: string }
+		r.Get("/characters", handlers.GetCharacters)    // Query { name, gender, species }
 	})
 
 	err := http.ListenAndServe(":4000", r)
