@@ -49,16 +49,33 @@ func main() {
 		r.Delete("/images/{id}", handlers.DeleteImage)
 	})
 
+	/* TODO: images
+	1. search by tags
+	2. search by characters
+	3. random image search by tags and characters
+	4. get characters from image
+	5. get tags from image
+	*/
+
 	r.Group(func(r chi.Router) {
-		r.Post("/tags", handlers.CreateTag) // Body{ name: string, description: string }
-		r.Get("/tags/{name}", handlers.GetTagByName)
-		r.Get("/tags", handlers.GetTags)
+		r.Post("/tags", handlers.CreateTag)          // Body{ name: string, description: string }
+		r.Get("/tags/{name}", handlers.GetTagByName) // TODO: remove
+		r.Get("/tags", handlers.GetTags)             // TODO: get tag by name, limit,
 	})
+
+	/* TODO: tags
+	1. get get by id
+	*/
 
 	r.Group(func(r chi.Router) {
 		r.Post("/characters", handlers.CreateCharacter) // Body{ name, description, gender, species: string }
 		r.Get("/characters", handlers.GetCharacters)    // Query { name, gender, species }
 	})
+
+	/* TODO: tags
+	1. add limit on get all characters
+	2. get character by id
+	*/
 
 	err := http.ListenAndServe(":4000", r)
 	if err != nil {
