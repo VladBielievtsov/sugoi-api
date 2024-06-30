@@ -20,8 +20,10 @@ func CreateCharacter(w http.ResponseWriter, r *http.Request) {
 func GetCharacters(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	name := q.Get("name")
+	gender := q.Get("gender")
+	species := q.Get("species")
 
-	characters, err := charactersService.GetCharacters(name)
+	characters, err := charactersService.GetCharacters(name, gender, species)
 	if err != nil {
 		utils.JSONResponse(w, http.StatusNotFound, err)
 	}

@@ -3,11 +3,11 @@ package services
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"sugoi-api/db"
 	"sugoi-api/types"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type CharactersService struct{}
@@ -39,15 +39,23 @@ func (s *CharactersService) CreateCharacter(r *http.Request) (types.Character, m
 	return character, nil
 }
 
-func (s *CharactersService) GetCharacters(name string) ([]types.Character, map[string]string) {
+func (s *CharactersService) GetCharacters(name, gender, species string) ([]types.Character, map[string]string) {
 	var characters []types.Character
-	var result *gorm.DB
+	query := db.DB
 
 	if name != "" {
-		result = db.DB.Where("name ILIKE ?", "%"+name+"%").Find(&characters)
-	} else {
-		result = db.DB.Find(&characters)
+		query = query.Where("name ILIKE ?", "%"+name+"%")
 	}
+
+	if gender != "" {
+		query = query.Where("LOWER(gender) = ?", strings.ToLower(gender))
+	}
+
+	if species != "" {
+		query = query.Where("LOWER(species) = ?", strings.ToLower(species))
+	}
+
+	result := query.Find(&characters)
 
 	if result.Error != nil {
 		return nil, map[string]string{"msg": "Characters not found"}

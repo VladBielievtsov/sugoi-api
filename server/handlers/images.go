@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
+	"strconv"
 	"sugoi-api/services"
 	"sugoi-api/utils"
 
@@ -41,20 +40,12 @@ func GetImageByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRandomImages(w http.ResponseWriter, r *http.Request) {
-	type RequestBody struct {
-		Limit int `json:"limit"`
-	}
-
-	var requestBody RequestBody
-	err := json.NewDecoder(r.Body).Decode(&requestBody)
-	if err != nil && err != io.EOF {
-		utils.JSONResponse(w, http.StatusBadRequest, "Invalid request body")
-		return
-	}
+	q := r.URL.Query()
+	queryLimit, _ := strconv.Atoi(q.Get("limit"))
 
 	limit := 5
-	if requestBody.Limit > 0 {
-		limit = requestBody.Limit
+	if queryLimit > 0 {
+		limit = queryLimit
 	}
 
 	images, errs := imagesService.GetRandomImages(limit)
