@@ -9,3 +9,12 @@ seed:
 
 drop:
 	@go run cmd/drop/main.go
+
+docker-build:
+	docker-compose build sugoiapi
+
+docker-restart:
+	docker-compose up -d
+
+docker-run:
+	docker-compose up -d --build
