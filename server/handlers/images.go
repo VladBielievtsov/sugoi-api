@@ -62,6 +62,21 @@ func GetImagesTags(w http.ResponseWriter, r *http.Request) {
 	utils.JSONResponse(w, http.StatusOK, tags)
 }
 
+func GetImagesCharacters(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		utils.JSONResponse(w, http.StatusBadRequest, map[string]string{"msg": "ID parameter is required"})
+		return
+	}
+
+	characters, err := imagesService.GetImagesCharacters(id)
+	if err != nil {
+		utils.JSONResponse(w, http.StatusNotFound, err)
+	}
+
+	utils.JSONResponse(w, http.StatusOK, characters)
+}
+
 func GetRandomImages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	queryLimit, _ := strconv.Atoi(q.Get("limit"))

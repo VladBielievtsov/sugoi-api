@@ -47,14 +47,9 @@ func main() {
 		r.Get("/images/{id}", handlers.GetImageByID)
 		r.Get("/images/random", handlers.GetRandomImages) // Query{ ?limit=2 }
 		r.Get("/images/{id}/tags", handlers.GetImagesTags)
-		// r.Get("/images/{id}/characters")
+		r.Get("/images/{id}/characters", handlers.GetImagesCharacters)
 		r.Delete("/images/{id}", handlers.DeleteImage)
 	})
-
-	/* TODO: images
-	4. get characters from image
-	5. get tags from image
-	*/
 
 	r.Group(func(r chi.Router) {
 		r.Post("/tags", handlers.CreateTag)          // Body{ name: string, description: string }

@@ -174,6 +174,20 @@ func (s *ImagesService) GetImagesTags(id string) ([]types.Tag, map[string]string
 	return tags, nil
 }
 
+func (s *ImagesService) GetImagesCharacters(id string) ([]types.Character, map[string]string) {
+	var image types.Image
+	var characters []types.Character
+
+	result := db.DB.Preload("Characters").First(&image, "id = ?", id)
+	if result.Error != nil {
+		return nil, map[string]string{"msg": "Image not found"}
+	}
+
+	characters = image.Characters
+
+	return characters, nil
+}
+
 func (s *ImagesService) GetRandomImages(limit int, tag, character string) ([]types.Image, map[string]string) {
 	var images []types.Image
 
