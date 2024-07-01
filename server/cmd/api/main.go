@@ -46,6 +46,8 @@ func main() {
 		r.Get("/images", handlers.GetImages)   // Query{ ?page=1, ?page_size=5 }
 		r.Get("/images/{id}", handlers.GetImageByID)
 		r.Get("/images/random", handlers.GetRandomImages) // Query{ ?limit=2 }
+		r.Get("/images/{id}/tags", handlers.GetImagesTags)
+		// r.Get("/images/{id}/characters")
 		r.Delete("/images/{id}", handlers.DeleteImage)
 	})
 

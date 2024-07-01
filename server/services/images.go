@@ -160,6 +160,20 @@ func (s *ImagesService) GetImageByID(id string) (types.Image, map[string]string)
 	return image, nil
 }
 
+func (s *ImagesService) GetImagesTags(id string) ([]types.Tag, map[string]string) {
+	var image types.Image
+	var tags []types.Tag
+
+	result := db.DB.Preload("Tags").First(&image, "id = ?", id)
+	if result.Error != nil {
+		return nil, map[string]string{"msg": "Image not found"}
+	}
+
+	tags = image.Tags
+
+	return tags, nil
+}
+
 func (s *ImagesService) GetRandomImages(limit int, tag, character string) ([]types.Image, map[string]string) {
 	var images []types.Image
 
