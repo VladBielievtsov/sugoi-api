@@ -121,11 +121,26 @@ func (s *ImagesService) CreateImage(req *http.Request) (types.Image, map[string]
 	return image, nil
 }
 
-func (s *ImagesService) GetImages(r *http.Request) ([]types.Image, map[string]string) {
+func (s *ImagesService) GetImages(r *http.Request, tag, character string) ([]types.Image, map[string]string) {
 	var images []types.Image
 
-	result := db.DB.Preload("Tags").Preload("Characters")
-	result = result.Scopes(db.Paginate(r)).Find(&images)
+	result := db.DB.Preload("Tags").Preload("Characters").Scopes(db.Paginate(r))
+
+	if tag != "" {
+		tag = strings.ToLower(tag)
+		result = result.Joins("JOIN image_tags ON image_tags.image_id = images.id").
+			Joins("JOIN tags ON tags.id = image_tags.tag_id").
+			Where("LOWER(tags.name) = ?", tag)
+	}
+
+	if character != "" {
+		character = strings.ToLower(character)
+		result = result.Joins("JOIN image_characters ON image_characters.image_id = images.id").
+			Joins("JOIN characters ON characters.id = image_characters.character_id").
+			Where("LOWER(characters.name) = ?", character)
+	}
+
+	result = result.Find(&images)
 
 	if result.Error != nil {
 		return nil, map[string]string{"msg": "Images not found"}
