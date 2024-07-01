@@ -50,9 +50,6 @@ func main() {
 	})
 
 	/* TODO: images
-	1. search by tags
-	2. search by characters
-	3. random image search by tags and characters
 	4. get characters from image
 	5. get tags from image
 	*/

@@ -50,13 +50,15 @@ func GetImageByID(w http.ResponseWriter, r *http.Request) {
 func GetRandomImages(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	queryLimit, _ := strconv.Atoi(q.Get("limit"))
+	tag := r.URL.Query().Get("tag")
+	character := r.URL.Query().Get("character")
 
 	limit := 5
 	if queryLimit > 0 {
 		limit = queryLimit
 	}
 
-	images, errs := imagesService.GetRandomImages(limit)
+	images, errs := imagesService.GetRandomImages(limit, tag, character)
 	if errs != nil {
 		utils.JSONResponse(w, http.StatusNotFound, errs)
 		return

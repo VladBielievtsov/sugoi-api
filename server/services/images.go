@@ -160,10 +160,27 @@ func (s *ImagesService) GetImageByID(id string) (types.Image, map[string]string)
 	return image, nil
 }
 
-func (s *ImagesService) GetRandomImages(limit int) ([]types.Image, map[string]string) {
+func (s *ImagesService) GetRandomImages(limit int, tag, character string) ([]types.Image, map[string]string) {
 	var images []types.Image
 
-	result := db.DB.Order("RANDOM()").Limit(limit).Find(&images)
+	result := db.DB.Preload("Tags").Preload("Characters").Order("RANDOM()").Limit(limit)
+
+	if tag != "" {
+		tag = strings.ToLower(tag)
+		result = result.Joins("JOIN image_tags ON image_tags.image_id = images.id").
+			Joins("JOIN tags ON tags.id = image_tags.tag_id").
+			Where("LOWER(tags.name) = ?", tag)
+	}
+
+	if character != "" {
+		character = strings.ToLower(character)
+		result = result.Joins("JOIN image_characters ON image_characters.image_id = images.id").
+			Joins("JOIN characters ON characters.id = image_characters.character_id").
+			Where("LOWER(characters.name) = ?", character)
+	}
+
+	result = result.Find(&images)
+
 	if result.Error != nil {
 		return nil, map[string]string{"msg": "Images not found"}
 	}
