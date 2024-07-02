@@ -75,3 +75,14 @@ func (s *CharactersService) GetCharactersByNames(names []string) ([]types.Charac
 	}
 	return characters, nil
 }
+
+func (s *CharactersService) GetCharacterByID(id string) (types.Character, map[string]string) {
+	var character types.Character
+
+	result := db.DB.First(&character, "id = ?", id)
+	if result.Error != nil {
+		return types.Character{}, map[string]string{"msg": "Character not found"}
+	}
+
+	return character, nil
+}

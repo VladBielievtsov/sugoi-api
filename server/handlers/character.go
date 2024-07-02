@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"sugoi-api/services"
 	"sugoi-api/utils"
+
+	"github.com/go-chi/chi/v5"
 )
 
 var charactersService = services.NewCharactersService()
@@ -29,4 +31,19 @@ func GetCharacters(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.JSONResponse(w, http.StatusOK, characters)
+}
+
+func GetCharacterByID(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		utils.JSONResponse(w, http.StatusBadRequest, map[string]string{"msg": "ID parameter is required"})
+		return
+	}
+
+	character, err := charactersService.GetCharacterByID(id)
+	if err != nil {
+		utils.JSONResponse(w, http.StatusInternalServerError, err)
+	}
+
+	utils.JSONResponse(w, http.StatusOK, character)
 }

@@ -54,20 +54,16 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Post("/tags", handlers.CreateTag) // Body{ name: string, description: string }
 		r.Get("/tags/{id}", handlers.GetTagByID)
-		r.Get("/tags", handlers.GetTags) // TODO: get tag by name, limit,
+		r.Get("/tags", handlers.GetTags) // Query{ name }
 	})
-
-	/* TODO: tags
-	1. get get by id
-	*/
 
 	r.Group(func(r chi.Router) {
 		r.Post("/characters", handlers.CreateCharacter) // Body{ name, description, gender, species: string }
 		r.Get("/characters", handlers.GetCharacters)    // Query { name, gender, species }
+		r.Get("/characters/{id}", handlers.GetCharacterByID)
 	})
 
 	/* TODO: tags
-	1. add limit on get all characters
 	2. get character by id
 	*/
 
