@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 	"sugoi-api/services"
 	"sugoi-api/utils"
 
@@ -20,12 +19,14 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 	utils.JSONResponse(w, http.StatusCreated, &tag)
 }
 
-func GetTagByName(w http.ResponseWriter, r *http.Request) {
-	name := chi.URLParam(r, "name")
-	name = strings.Join(strings.Split(name, "-"), " ")
-	name = utils.CapitalizeWords(name)
+func GetTagByID(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		utils.JSONResponse(w, http.StatusBadRequest, map[string]string{"msg": "ID parameter is required"})
+		return
+	}
 
-	tag, err := tagsService.GetTagByName(name)
+	tag, err := tagsService.GetTagByID(id)
 	if err != nil {
 		utils.JSONResponse(w, http.StatusInternalServerError, err)
 	}

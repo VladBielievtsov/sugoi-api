@@ -52,9 +52,9 @@ func main() {
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Post("/tags", handlers.CreateTag)          // Body{ name: string, description: string }
-		r.Get("/tags/{name}", handlers.GetTagByName) // TODO: remove
-		r.Get("/tags", handlers.GetTags)             // TODO: get tag by name, limit,
+		r.Post("/tags", handlers.CreateTag)      // Body{ name: string, description: string }
+		r.Get("/tags/{id}", handlers.GetTagByID) // TODO: remove
+		r.Get("/tags", handlers.GetTags)         // TODO: get tag by name, limit,
 	})
 
 	/* TODO: tags

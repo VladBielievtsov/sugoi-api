@@ -36,10 +36,10 @@ func (s *TagsService) CreateTag(r *http.Request) (types.Tag, map[string]string) 
 	return tag, nil
 }
 
-func (s *TagsService) GetTagByName(name string) (types.Tag, map[string]string) {
+func (s *TagsService) GetTagByID(id string) (types.Tag, map[string]string) {
 	var tag types.Tag
 
-	result := db.DB.First(&tag, "name = ?", name)
+	result := db.DB.First(&tag, "id = ?", id)
 	if result.Error != nil {
 		return types.Tag{}, map[string]string{"msg": "Tag not found"}
 	}
