@@ -55,6 +55,7 @@ func main() {
 		r.Post("/tags", handlers.CreateTag) // Body{ name: string, description: string }
 		r.Get("/tags/{id}", handlers.GetTagByID)
 		r.Get("/tags", handlers.GetTags) // Query{ name }
+		r.Put("/tags/{id}", handlers.UpdateTag)
 	})
 
 	r.Group(func(r chi.Router) {
@@ -62,10 +63,6 @@ func main() {
 		r.Get("/characters", handlers.GetCharacters)    // Query { name, gender, species }
 		r.Get("/characters/{id}", handlers.GetCharacterByID)
 	})
-
-	/* TODO: tags
-	2. get character by id
-	*/
 
 	err := http.ListenAndServe(":4000", r)
 	if err != nil {

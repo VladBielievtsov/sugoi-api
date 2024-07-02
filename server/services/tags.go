@@ -80,3 +80,20 @@ func (s *TagsService) GetOrCreateTags(tagNames []string) ([]types.Tag, map[strin
 	}
 	return tags, nil
 }
+
+func (s *TagsService) UpdateTag(id, name, description string) (types.Tag, map[string]string) {
+	var tag types.Tag
+
+	if err := db.DB.First(&tag, "id = ?", id).Error; err != nil {
+		return types.Tag{}, map[string]string{"msg": "Tags not found"}
+	}
+
+	tag.Name = name
+	tag.Description = description
+
+	if err := db.DB.Save(&tag).Error; err != nil {
+		return types.Tag{}, map[string]string{"msg": "Failed to update tag"}
+	}
+
+	return tag, nil
+}
