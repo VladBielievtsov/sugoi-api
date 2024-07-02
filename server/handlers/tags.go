@@ -35,7 +35,9 @@ func GetTagByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTags(w http.ResponseWriter, r *http.Request) {
-	tags, err := tagsService.GetTags()
+	name := r.URL.Query().Get("name")
+
+	tags, err := tagsService.GetTags(name)
 	if err != nil {
 		utils.JSONResponse(w, http.StatusNotFound, err)
 	}

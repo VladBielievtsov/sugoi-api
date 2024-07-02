@@ -47,10 +47,17 @@ func (s *TagsService) GetTagByID(id string) (types.Tag, map[string]string) {
 	return tag, nil
 }
 
-func (s *TagsService) GetTags() ([]types.Tag, map[string]string) {
+func (s *TagsService) GetTags(name string) ([]types.Tag, map[string]string) {
 	var tags []types.Tag
 
-	result := db.DB.Find(&tags)
+	query := db.DB
+
+	if name != "" {
+		query = query.Where("name ILIKE ?", "%"+name+"%")
+	}
+
+	result := query.Find(&tags)
+
 	if result.Error != nil {
 		return []types.Tag{}, map[string]string{"msg": "Tags not found"}
 	}
