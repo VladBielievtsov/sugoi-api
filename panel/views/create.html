@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Image</title>
+  <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      background-image: url("https://images5.alphacoders.com/135/1358229.jpeg");
+      background-size: 100% 100vh;
+      background-position: top center;
+      background-attachment: fixed;
+      padding: 200px 16px;
+    }
+
+    .wrapp {
+      max-width: 550px;
+      width: 100%;
+      margin: 0 auto;
+      border: 1px solid #222;
+      padding: 20px;
+      border-radius: 6px;
+      background: white;
+    }
+
+    .wrapp h1 {
+      text-align: center;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+
+    .row input {
+      margin-top: 5px;
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 20px;
+      background: rgb(14 165 233);
+      color: white;
+      padding: 7px 14px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .2s ease;
+      height: auto;
+    }
+
+    .btn:hover {
+      background: rgb(2 132 199);
+    }
+
+    input {
+      height: 30px;
+      padding: 0 14px;
+    }
+
+    img {
+      width: 100%;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapp">
+    <h1>Upload Image</h1>
+    <form>
+      <div class="row">
+        <label for="image">Select image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+      </div>
+      <div class="row">
+        <label for="source">Source:</label>
+        <input type="text" name="source" id="source" required>
+      </div>
+      <div class="row">
+        <label for="tags">Tags: Girl, Anime</label>
+        <input type="text" name="tags" id="tags">
+      </div>
+      <div class="row">
+        <label for="characters">Characters: Makima, Yoru</label>
+        <input type="text" name="characters" id="characters">
+      </div>
+      <input type="submit" value="Upload" class="btn">
+      <div id="loading" style="display: none;">Uploading...</div>
+    </form>
+    <div id="response"></div>
+  </div>
+
+  <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      let formData = new FormData(this);
+      document.getElementById('loading').style.display = 'block';
+      fetch('http://localhost:4000/images', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        document.getElementById('response').innerHTML = `<img src="http://localhost:4000${data.image_url}" alt="http://localhost:4000${data.image_url}"/><p>New Image loaded</p>`;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('response').innerHTML = 'An error occurred while uploading the image.';
+      })
+      .finally(() => {
+        document.getElementById('loading').style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>

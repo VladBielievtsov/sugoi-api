@@ -27,12 +27,14 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"POST", "DELETE", "PUT"},
+		AllowedHeaders:   []string{"*"},
 		AllowCredentials: false,
-	}))
+	})
+
+	r.Use(corsHandler.Handler)
 
 	fs := http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads")))
 	r.Handle("/uploads/*", fs)
