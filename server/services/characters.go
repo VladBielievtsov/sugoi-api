@@ -86,3 +86,22 @@ func (s *CharactersService) GetCharacterByID(id string) (types.Character, map[st
 
 	return character, nil
 }
+
+func (s *CharactersService) UpdateCharacter(id, name, description, gender, species string) (types.Character, map[string]string) {
+	var character types.Character
+
+	if err := db.DB.First(&character, "id = ?", id).Error; err != nil {
+		return types.Character{}, map[string]string{"msg": "Character not found"}
+	}
+
+	character.Name = name
+	character.Description = description
+	character.Gender = gender
+	character.Species = species
+
+	if err := db.DB.Save(&character).Error; err != nil {
+		return types.Character{}, map[string]string{"msg": "Failed to update character"}
+	}
+
+	return character, nil
+}

@@ -62,6 +62,7 @@ func main() {
 		r.Post("/characters", handlers.CreateCharacter) // Body{ name, description, gender, species: string }
 		r.Get("/characters", handlers.GetCharacters)    // Query { name, gender, species }
 		r.Get("/characters/{id}", handlers.GetCharacterByID)
+		r.Put("/characters/{id}", handlers.UpdateCharacter)
 	})
 
 	err := http.ListenAndServe(":4000", r)

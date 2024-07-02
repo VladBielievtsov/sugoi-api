@@ -85,7 +85,7 @@ func (s *TagsService) UpdateTag(id, name, description string) (types.Tag, map[st
 	var tag types.Tag
 
 	if err := db.DB.First(&tag, "id = ?", id).Error; err != nil {
-		return types.Tag{}, map[string]string{"msg": "Tags not found"}
+		return types.Tag{}, map[string]string{"msg": "Tag not found"}
 	}
 
 	tag.Name = name
