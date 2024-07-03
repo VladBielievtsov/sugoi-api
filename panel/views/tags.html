@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tags</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      padding: 20px;
+      padding-top: 70px;
+    }
+
+    .header {
+      background: #ffffff70;
+      padding: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .header a {
+      text-decoration: none;
+      color: black;
+      margin-left: 10px;
+    }
+
+    .form {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .form input {
+      flex: 1;
+      height: 30px;
+      padding: 0 14px;
+    }
+
+    .btn {
+      background: rgb(14 165 233);
+      color: white;
+      padding: 7px 14px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .2s ease;
+      height: auto;
+    }
+
+    .btn:hover {
+      background: rgb(2 132 199);
+    }
+
+    #response {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-gap: 20px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      background: #f1f1f1;
+      border: 1px solid #dbdbdb;
+      border-radius: 6px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <nav>
+      <a href="/">Home</a>
+      <a href="/images">Images</a>
+      <a href="/tags">Tags</a>
+    </nav>
+  </header>
+
+  <h1>Tags</h1>
+
+  <form class="form">
+    <input type="text" placeholder="Name" id="name">
+    <input type="text" placeholder="Description" id="desc">
+    <button class="btn" id="create">Create a tag</button>
+  </form>
+  <div id="err" style="color: red;"></div>
+
+  <div id="loading">Loading...</div>
+  <div id="response"></div>
+
+  <script>
+
+    let tags = ""
+
+    window.onload = function() {
+      fetch('http://localhost:4000/tags', {
+        method: 'GET'
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        if (data.length == 0) {
+          document.getElementById('response').innerHTML = `<p>There are no tags</p>`;
+        } else {
+          
+          data.map((tag) => {
+            tags += `<div class="tag">${tag.name}</div>`
+          })
+          document.getElementById('response').innerHTML = tags;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('response').innerHTML = 'An error occurred while getting the tags.';
+      })
+      .finally(() => {
+        document.getElementById('loading').style.display = 'none';
+      });
+    }
+
+    const createBtn = document.getElementById("create")
+    
+    createBtn.addEventListener("click", (e) => {
+      e.preventDefault()
+      const name = document.getElementById("name").value.trim()
+      const desc = document.getElementById("desc").value.trim()
+     
+      if (name.trim() == "" || desc.trim() == "") {
+        document.getElementById("err").innerText = "Enter all fields"
+        return
+      }
+
+      fetch('http://localhost:4000/tags', {
+        method: 'POST',
+        body: JSON.stringify({ name: name, description: desc })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        tags += `<div class="tag">${data.name}</div>`
+        document.getElementById('response').innerHTML = tags;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      })
+    })
+  </script>
+  
+</body>
+</html>
