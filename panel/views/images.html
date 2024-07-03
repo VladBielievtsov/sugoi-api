@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Images</title>
+  <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+
+    body {
+      padding: 20px;
+      padding-top: 70px;
+    }
+
+    #response {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-gap: 20px;
+      margin-top: 20px;
+    }
+
+    #response img {
+      width: 100%;
+      display: block;
+    }
+
+    .header {
+      background: #ffffff70;
+      padding: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .header a {
+      text-decoration: none;
+      color: black;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <nav>
+      <a href="/">Home</a>
+      <a href="/images">Images</a>
+    </nav>
+  </header>
+
+  <h1>Image Gallery</h1>
+
+  <p id="loading">Loading...</p>
+
+  <div id="response"></div>
+
+  <script>
+
+    window.onload = function() {
+      fetch('http://localhost:4000/images', {
+        method: 'GET'
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        if (data.length == 0) {
+          document.getElementById('response').innerHTML = `<p>There are no images</p>`;
+        } else {
+          let images = ""
+          data.map((img) => {
+            images += `<img src="http://localhost:4000${img.image_url}" alt="http://localhost:4000${img.image_url}"/>`
+          })
+          document.getElementById('response').innerHTML = images;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('response').innerHTML = 'An error occurred while uploading the image.';
+      })
+      .finally(() => {
+        document.getElementById('loading').style.display = 'none';
+      });
+    }
+
+  </script>
+
+</body>
+</html>

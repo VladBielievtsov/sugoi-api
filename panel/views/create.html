@@ -73,9 +73,35 @@
       border-radius: 6px;
       margin-top: 10px;
     }
+
+    .header {
+      background: #ffffff70;
+      padding: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .header a {
+      text-decoration: none;
+      color: black;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
+  <header class="header">
+    <nav>
+      <a href="/">Home</a>
+      <a href="/images">Images</a>
+    </nav>
+  </header>
+
   <div class="wrapp">
     <h1>Upload Image</h1>
     <form>

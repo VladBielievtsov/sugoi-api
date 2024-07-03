@@ -30,6 +30,10 @@ func main() {
 		http.ServeFile(w, r, "views/create.html")
 	})
 
+	r.Get("/images", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "views/images.html")
+	})
+
 	slog.Info(fmt.Sprintf("Listening on %v port", cfg.App.Port))
 
 	if err := http.ListenAndServe(":3000", r); err != nil {
